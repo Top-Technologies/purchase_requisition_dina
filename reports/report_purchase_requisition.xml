@@ -30,7 +30,7 @@
                 <table style="width: 100%; border: none; border-collapse: collapse; margin-bottom: 18px; font-size: 13px;">
                     <tr>
                         <td style="width: 58%; border: none !important; padding: 3px 0; vertical-align: bottom;">
-                            <strong>Dept</strong>--------------------------------- : <span style="font-weight: normal;" t-out="data['dept']"/>
+                            <strong>Dept</strong>: <span style="font-weight: normal;" t-out="data['dept']"/>
                         </td>
                         <td style="width: 42%; border: none !important; padding: 3px 0; text-align: right; vertical-align: bottom;">
                             <strong>Pr no</strong>------- : <span style="font-weight: normal;" t-out="data['pr_no']"/>
@@ -38,10 +38,10 @@
                     </tr>
                     <tr>
                         <td style="width: 58%; border: none !important; padding: 3px 0; vertical-align: bottom;">
-                            <strong>Section</strong>----------------------------- : <span style="font-weight: normal;" t-out="data['section']"/>
+                            <strong>Section</strong>: <span style="font-weight: normal;" t-out="data['section']"/>
                         </td>
                         <td style="width: 42%; border: none !important; padding: 3px 0; text-align: right; vertical-align: bottom;">
-                            <strong>Date</strong>-------- : <span style="font-weight: normal;" t-out="data['date']"/>
+                            <strong>Date</strong>: <span style="font-weight: normal;" t-out="data['date']"/>
                         </td>
                     </tr>
                 </table>
@@ -99,19 +99,19 @@
                 <table style="width: 100%; border: none; border-collapse: collapse; margin-top: 35px; font-size: 13px;">
                     <tr>
                         <td style="width: 35%; border: none !important; vertical-align: top; line-height: 1.8;">
-                            <strong>Requested by</strong> ----- <span t-out="data['req_name']"/><br/>
+                            <strong>Requested by</strong> <span t-out="data['req_name']"/><br/>
                             date- <span t-out="data['req_date']"/><br/>
-                            sign----------------------
+                            sign
                         </td>
                         <td style="width: 35%; border: none !important; vertical-align: top; line-height: 1.8;">
-                            <strong>Cheked by</strong>------- <span t-out="data['chk_name']"/><br/>
+                            <strong>Cheked by</strong><span t-out="data['chk_name']"/><br/>
                             date- <span t-out="data['chk_date']"/><br/>
-                            sign----------------------
+                            sign
                         </td>
                         <td style="width: 30%; border: none !important; vertical-align: top; line-height: 1.8;">
-                            <strong>Approved by</strong> ---------- <span t-out="data['app_name']"/><br/>
+                            <strong>Approved by</strong><span t-out="data['app_name']"/><br/>
                             date- <span t-out="data['app_date']"/><br/>
-                            sign----------------------
+                            sign
                         </td>
                     </tr>
                 </table>
