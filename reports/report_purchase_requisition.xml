@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Report Action for purchase.requisition.dina -->
+    <record id="action_report_purchase_requisition_dina" model="ir.actions.report">
+        <field name="name">Purchase Requisition Print</field>
+        <field name="model">purchase.requisition.dina</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">purchase_requisition_dina.report_purchase_requisition_document</field>
+        <field name="report_file">purchase_requisition_dina.report_purchase_requisition_document</field>
+        <field name="binding_model_id" ref="model_purchase_requisition_dina"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <!-- Single Document Layout matching Dina Anbessa Beer Distribution purchase requisition(PR) -->
+    <template id="report_purchase_requisition_document_single">
+        <t t-set="data" t-value="o._get_dina_report_values()"/>
+        <t t-call="web.basic_layout">
+            <div class="page" style="font-family: Arial, Helvetica, sans-serif; font-size: 13px; color: #000; padding: 20px 25px;">
+                <!-- Document Title -->
+                <div style="text-align: center; margin-bottom: 25px;">
+                    <div style="font-size: 22px; font-weight: bold; margin-bottom: 3px;">
+                        Dina Anbessa Beer Distribution
+                    </div>
+                    <div style="font-size: 16px; font-weight: bold;">
+                        purchase requisition(PR)
+                    </div>
+                </div>
+
+                <!-- Meta Fields -->
+                <table style="width: 100%; border: none; border-collapse: collapse; margin-bottom: 18px; font-size: 13px;">
+                    <tr>
+                        <td style="width: 58%; border: none !important; padding: 3px 0; vertical-align: bottom;">
+                            <strong>Dept</strong>--------------------------------- : <span style="font-weight: normal;" t-out="data['dept']"/>
+                        </td>
+                        <td style="width: 42%; border: none !important; padding: 3px 0; text-align: right; vertical-align: bottom;">
+                            <strong>Pr no</strong>------- : <span style="font-weight: normal;" t-out="data['pr_no']"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="width: 58%; border: none !important; padding: 3px 0; vertical-align: bottom;">
+                            <strong>Section</strong>----------------------------- : <span style="font-weight: normal;" t-out="data['section']"/>
+                        </td>
+                        <td style="width: 42%; border: none !important; padding: 3px 0; text-align: right; vertical-align: bottom;">
+                            <strong>Date</strong>-------- : <span style="font-weight: normal;" t-out="data['date']"/>
+                        </td>
+                    </tr>
+                </table>
+
+                <!-- Main Requisition Table (8 columns) -->
+                <table style="width: 100%; border-collapse: collapse; border: 1.5px solid black; margin-bottom: 25px;">
+                    <thead>
+                        <tr style="text-align: center; font-size: 12px; font-weight: bold;">
+                            <th style="border: 1px solid black; width: 6%; padding: 6px 3px;">S/n</th>
+                            <th style="border: 1px solid black; width: 28%; padding: 6px 4px; text-align: left;">Description</th>
+                            <th style="border: 1px solid black; width: 7%; padding: 6px 3px;">qty</th>
+                            <th style="border: 1px solid black; width: 11%; padding: 6px 4px; text-align: right;">u/price</th>
+                            <th style="border: 1px solid black; width: 12%; padding: 6px 4px; text-align: right;">t/price</th>
+                            <th style="border: 1px solid black; width: 11%; padding: 6px 4px; text-align: right;">vat 15%</th>
+                            <th style="border: 1px solid black; width: 14%; padding: 6px 4px; text-align: right;">grand Total</th>
+                            <th style="border: 1px solid black; width: 11%; padding: 6px 4px;">Remark</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr t-foreach="data['lines']" t-as="line">
+                            <td style="border: 1px solid black; text-align: center; padding: 6px 3px;"><t t-out="line['sn']"/></td>
+                            <td style="border: 1px solid black; padding: 6px 4px;"><t t-out="line['description']"/></td>
+                            <td style="border: 1px solid black; text-align: center; padding: 6px 3px;"><t t-out="'{:g}'.format(line['qty'])"/></td>
+                            <td style="border: 1px solid black; text-align: right; padding: 6px 4px;"><t t-out="'{:,.2f}'.format(line['unit_price'])"/></td>
+                            <td style="border: 1px solid black; text-align: right; padding: 6px 4px;"><t t-out="'{:,.2f}'.format(line['total_price'])"/></td>
+                            <td style="border: 1px solid black; text-align: right; padding: 6px 4px;"><t t-out="'{:,.2f}'.format(line['vat_15'])"/></td>
+                            <td style="border: 1px solid black; text-align: right; padding: 6px 4px;"><t t-out="'{:,.2f}'.format(line['grand_total'])"/></td>
+                            <td style="border: 1px solid black; padding: 6px 4px;"><t t-out="line['remark']"/></td>
+                        </tr>
+
+                        <!-- Blank rows to preserve the pre-printed slip format -->
+                        <tr t-foreach="range(max(0, 5 - len(data['lines'])))" t-as="empty_row" style="height: 30px;">
+                            <td style="border: 1px solid black;">&amp;nbsp;</td>
+                            <td style="border: 1px solid black;">&amp;nbsp;</td>
+                            <td style="border: 1px solid black;">&amp;nbsp;</td>
+                            <td style="border: 1px solid black;">&amp;nbsp;</td>
+                            <td style="border: 1px solid black;">&amp;nbsp;</td>
+                            <td style="border: 1px solid black;">&amp;nbsp;</td>
+                            <td style="border: 1px solid black;">&amp;nbsp;</td>
+                            <td style="border: 1px solid black;">&amp;nbsp;</td>
+                        </tr>
+
+                        <!-- Total Summary Row -->
+                        <tr style="font-weight: bold;">
+                            <td colspan="4" style="border: 1px solid black; padding: 6px 8px; text-align: left;">Total</td>
+                            <td style="border: 1px solid black; text-align: right; padding: 6px 4px;"><t t-out="'{:,.2f}'.format(data['total_t_price'])"/></td>
+                            <td style="border: 1px solid black; text-align: right; padding: 6px 4px;"><t t-out="'{:,.2f}'.format(data['total_vat'])"/></td>
+                            <td style="border: 1px solid black; text-align: right; padding: 6px 4px;"><t t-out="'{:,.2f}'.format(data['total_grand'])"/></td>
+                            <td style="border: 1px solid black;">&amp;nbsp;</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <!-- Bottom Signatures (3 Columns) -->
+                <table style="width: 100%; border: none; border-collapse: collapse; margin-top: 35px; font-size: 13px;">
+                    <tr>
+                        <td style="width: 35%; border: none !important; vertical-align: top; line-height: 1.8;">
+                            <strong>Requested by</strong> ----- <span t-out="data['req_name']"/><br/>
+                            date- <span t-out="data['req_date']"/><br/>
+                            sign----------------------
+                        </td>
+                        <td style="width: 35%; border: none !important; vertical-align: top; line-height: 1.8;">
+                            <strong>Cheked by</strong>------- <span t-out="data['chk_name']"/><br/>
+                            date- <span t-out="data['chk_date']"/><br/>
+                            sign----------------------
+                        </td>
+                        <td style="width: 30%; border: none !important; vertical-align: top; line-height: 1.8;">
+                            <strong>Approved by</strong> ---------- <span t-out="data['app_name']"/><br/>
+                            date- <span t-out="data['app_date']"/><br/>
+                            sign----------------------
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </t>
+    </template>
+
+    <!-- Report Template for purchase.requisition.dina -->
+    <template id="report_purchase_requisition_document">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="purchase_requisition_dina.report_purchase_requisition_document_single"/>
+            </t>
+        </t>
+    </template>
+
+    <!-- Inherit Approvals Report to use Dina PR layout when category is Dina Purchase Requisition -->
+    <template id="report_approval_request_dina_inherit" inherit_id="approvals.report_approval_request">
+        <xpath expr="//t[@t-call='approvals.report_aprroval_request_document']" position="replace">
+            <t t-if="o.category_id.name == 'Dina Purchase Requisition' or (hasattr(o, 'is_dina_pr') and o.is_dina_pr)">
+                <t t-call="purchase_requisition_dina.report_purchase_requisition_document_single"/>
+            </t>
+            <t t-else="">
+                <t t-call="approvals.report_aprroval_request_document" t-lang="o.partner_id.lang"/>
+            </t>
+        </xpath>
+    </template>
+</odoo>

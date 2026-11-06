@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="sequence_purchase_requisition_dina" model="ir.sequence">
+            <field name="name">Purchase Requisition Sequence</field>
+            <field name="code">purchase.requisition.dina</field>
+            <field name="prefix">PR/</field>
+            <field name="padding">4</field>
+            <field name="company_id" eval="False"/>
+        </record>
+    </data>
+
+    <record id="view_purchase_requisition_dina_form" model="ir.ui.view">
+        <field name="name">purchase.requisition.dina.form</field>
+        <field name="model">purchase.requisition.dina</field>
+        <field name="arch" type="xml">
+            <form string="Purchase Requisition">
+                <header>
+                    <button name="action_check" string="Check" type="object" invisible="state != 'draft'" class="oe_highlight"/>
+                    <button name="action_approve" string="Approve" type="object" invisible="state != 'checked'" class="oe_highlight"/>
+                    <button name="action_print_requisition" string="Print" type="object" class="btn-secondary" icon="fa-print"/>
+                    <button name="action_cancel" string="Cancel" type="object" invisible="state in ('approved', 'cancel')"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,checked,approved"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="%(approvals.approval_request_action)d"
+                                type="action"
+                                class="oe_stat_button"
+                                icon="fa-check-square-o"
+                                string="Approval"
+                                invisible="not approval_request_id">
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="department"/>
+                            <field name="section"/>
+                        </group>
+                        <group>
+                            <field name="date"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Requisition Lines">
+                            <field name="line_ids">
+                                <list editable="bottom">
+                                    <field name="description"/>
+                                    <field name="qty"/>
+                                    <field name="unit_price"/>
+                                    <field name="total_price"/>
+                                    <field name="vat_15"/>
+                                    <field name="grand_total"/>
+                                    <field name="remark"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                    <group col="3" style="margin-top: 20px;">
+                        <group string="Requested by">
+                            <field name="requested_by" readonly="1"/>
+                            <field name="requested_date" readonly="1"/>
+                        </group>
+                        <group string="Checked by">
+                            <field name="checked_by" readonly="1"/>
+                            <field name="checked_date" readonly="1"/>
+                        </group>
+                        <group string="Approved by">
+                            <field name="approved_by" readonly="1"/>
+                            <field name="approved_date" readonly="1"/>
+                        </group>
+                    </group>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_purchase_requisition_dina_tree" model="ir.ui.view">
+        <field name="name">purchase.requisition.dina.tree</field>
+        <field name="model">purchase.requisition.dina</field>
+        <field name="arch" type="xml">
+            <list string="Purchase Requisitions">
+                <field name="name"/>
+                <field name="department"/>
+                <field name="section"/>
+                <field name="date"/>
+                <field name="state"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_purchase_requisition_dina" model="ir.actions.act_window">
+        <field name="name">Purchase Requisition</field>
+        <field name="res_model">purchase.requisition.dina</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <menuitem id="menu_purchase_requisition_dina_root"
+              name="Dina Requisitions"
+              parent="purchase.menu_procurement_management"
+              action="action_purchase_requisition_dina"
+              sequence="10"/>
+
+    <!-- Inherit Approval Request Form to add Print Button and Department/Section -->
+    <record id="view_approval_request_form_dina_inherit" model="ir.ui.view">
+        <field name="name">approval.request.view.form.dina.inherit</field>
+        <field name="model">approval.request</field>
+        <field name="inherit_id" ref="approvals.approval_request_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header" position="inside">
+                <field name="is_dina_pr" invisible="1"/>
+                <button name="action_print_dina_pr" string="Print PR" type="object" class="btn-secondary" icon="fa-print" invisible="not is_dina_pr"/>
+            </xpath>
+            <xpath expr="//group[@name='request_details']" position="before">
+                <group name="dina_pr_details" string="Requisition Info" invisible="not is_dina_pr">
+                    <field name="department" readonly="request_status != 'new'"/>
+                    <field name="section" readonly="request_status != 'new'"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Inherit Approval Product Line List View to add pricing and remarks -->
+    <record id="view_approval_product_line_dina_tree" model="ir.ui.view">
+        <field name="name">approval.product.line.view.list.dina</field>
+        <field name="model">approval.product.line</field>
+        <field name="inherit_id" ref="approvals.approval_product_line_view_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='quantity']" position="after">
+                <field name="unit_price"/>
+                <field name="total_price" readonly="1" force_save="1"/>
+                <field name="vat_15" readonly="1" force_save="1"/>
+                <field name="grand_total" readonly="1" force_save="1"/>
+                <field name="remark"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>
